@@ -2,7 +2,7 @@
 
 An end-to-end batch ELT pipeline that turns the raw **Superstore** sales spreadsheet into a tested **star-schema data warehouse**. Apache Airflow orchestrates the run, dbt handles transformation and data quality, and DuckDB serves as the embedded analytical database. Everything runs locally in a single Docker container.
 
-📘 **Full technical documentation:** [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) (data dictionary, lineage, runbook, troubleshooting).
+📘 **Full technical documentation:** [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) (data dictionary, lineage, runbook, troubleshooting), also available as a [Word document](docs/Superstore_DWH_Documentation.docx).
 
 ![Airflow](https://img.shields.io/badge/Apache%20Airflow-3.1-017CEE?logo=apacheairflow&logoColor=white)
 ![dbt](https://img.shields.io/badge/dbt--core-1.12-FF694B?logo=dbt&logoColor=white)
