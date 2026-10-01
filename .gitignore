@@ -1,0 +1,24 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Airflow / dbt logs
+logs/
+airflow/logs/
+my_project/logs/
+
+# dbt build artifacts
+my_project/target/
+my_project/dbt_packages/
+my_project/dbt_internal_packages/
+my_project/.user.yml
+
+# DuckDB database (rebuilt by the pipeline)
+*.duckdb
+*.duckdb.wal
+
+# Secrets / editor
+.env
+.vscode/
+.idea/

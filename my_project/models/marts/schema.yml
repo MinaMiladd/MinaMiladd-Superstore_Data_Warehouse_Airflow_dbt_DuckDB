@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: fact_orders
+    description: Fact table containing order-level metrics and foreign keys to dimension tables
+    columns:
+      - name: sales_key
+        tests: [unique, not_null]
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_customer'), field: customer_key}
+      - name: product_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_product'), field: product_key}
+      - name: geography_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_location'), field: geography_key}
+      - name: order_date_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_date'), field: date_key}
+      - name: ship_date_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_date'), field: date_key}

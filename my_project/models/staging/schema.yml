@@ -1,0 +1,41 @@
+version: 2
+
+models:
+- name: stg_superstore
+  description: Cleaned and standardized Superstore order line items
+  columns:
+    - name: row_id
+      description: Unique identifier for each row
+      tests:
+        - unique
+        - not_null
+
+    - name: order_id
+      description: Order identifier
+      tests:
+        - not_null
+
+    - name: order_date
+      description: Date the order was placed
+      tests:
+        - not_null
+
+    - name: customer_id
+      description: Customer identifier
+      tests:
+        - not_null
+
+    - name: product_id
+      description: Product identifier
+      tests:
+        - not_null
+
+    - name: sales
+      description: Sales amount
+      tests:
+        - not_null
+
+    - name: quantity
+      description: Quantity ordered
+      tests:
+        - not_null    

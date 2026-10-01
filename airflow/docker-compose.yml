@@ -1,0 +1,17 @@
+services:
+  airflow:
+    build: .
+    image: superstore-airflow:latest
+    container_name: superstore-airflow
+    command: standalone            # webserver + scheduler + dag-processor in one container (dev setup)
+    ports:
+      - "8080:8080"
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"   # no login screen (local dev only)
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "True"
+      DO_NOT_TRACK: "1"                                       # disable dbt anonymous usage stats
+    volumes:
+      - ./dags:/opt/airflow/dags          # your DAG files
+      - ./logs:/opt/airflow/logs          # task logs, visible on Windows
+      - ..:/opt/airflow/project           # the whole Dbt_project folder

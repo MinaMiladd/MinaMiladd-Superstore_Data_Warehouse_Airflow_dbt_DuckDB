@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: ods
+    schema: ods
+    tables:
+      # - name: raw_customers
+      # - name: raw_orders
+      # - name: raw_payments
+      - name: superstore
