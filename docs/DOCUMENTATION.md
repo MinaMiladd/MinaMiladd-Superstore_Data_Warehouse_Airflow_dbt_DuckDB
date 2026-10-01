@@ -68,7 +68,13 @@ main_stg.stg_superstore  (view)
       └──▶ main_dwh.dim_date      ──┘     (joined twice: order & ship date)
 ```
 
-Run `dbt docs generate && dbt docs serve` from `my_project/` to see the interactive version of this graph.
+The same lineage, as rendered by dbt docs:
+
+![dbt lineage graph](images/dbt_lineage_graph.png)
+
+*Figure 1: dbt lineage graph. The `ods.superstore` source (green) feeds the staging view, which feeds four dimensions and the fact table.*
+
+To explore it yourself, run `dbt docs generate` and then `dbt docs serve --port 8081` from `my_project/`. Port 8081 avoids a clash with Airflow on 8080.
 
 ---
 
@@ -207,6 +213,12 @@ Every dbt command runs from `/opt/airflow/project/my_project` with `--profiles-d
 
 `--indirect-selection cautious` on task 3 keeps the source check from also running tests on models that haven't been built yet.
 
+`--no-partial-parse` makes dbt re-parse the project on every run. `my_project/target/` is shared with the host through the volume mount, and a parse cache written by dbt on Windows contains Windows paths that crash dbt on Linux.
+
+![Successful Airflow DAG run](images/airflow_dag_run.png)
+
+*Figure 2: a successful `superstore_dwh` run in the Airflow 3 Graph view, with all five tasks green.*
+
 ---
 
 ## 7. Data Quality & Testing
@@ -221,6 +233,12 @@ Every dbt command runs from `/opt/airflow/project/my_project` with `--profiles-d
 | `fact_orders`    | `customer_key`, `product_key`, `geography_key`, `order_date_key`, `ship_date_key` | `not_null`, `relationships` |
 
 Together, the `relationships` and `not_null` tests on the fact table guarantee that **every fact row joins to exactly one member of each dimension**. This catches fan-out or orphaned rows caused by key logic changes.
+
+Tests appear in dbt docs next to each column (**U** = unique, **N** = not_null, **F** = relationships / foreign key):
+
+![dbt docs for fact_orders](images/dbt_docs_fact_orders.png)
+
+*Figure 3: the dbt docs page for `fact_orders`, showing that it is built in `dev.main_dwh` and listing the tests on each column.*
 
 Run the tests manually:
 
@@ -327,6 +345,8 @@ my_project:
 | `Configuration paths exist ... which do not apply to any resources` | The key under `models:` isn't the project `name`         | Use `models: my_project:`                                           |
 | `IO Error: Could not set lock on file "dev.duckdb"`             | Another process (DBeaver, CLI, notebook) has the DB open     | Close that connection, then clear the task                          |
 | `Nothing to do` in `dbt_test_sources`                           | No tests are defined on the source                           | Expected until source tests are added (see Limitations)             |
+| `'dbt_duckdb://macros/columns.sql'` KeyError during parsing     | `target/partial_parse.msgpack` was written by dbt on Windows (backslash paths) and reused by dbt in the container | Delete the file. The DAG passes `--no-partial-parse` to prevent this |
+| `dbt docs serve` fails, or opens Airflow instead              | Both default to port 8080                                    | `dbt docs serve --port 8081`                                        |
 | DAG doesn't appear in the UI                                    | Python error in the DAG file                                 | Check `airflow/logs/dag_processor/…`, or the import errors shown in the UI |
 
 ---

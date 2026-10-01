@@ -67,6 +67,8 @@ A star schema at the grain of **one row per order line item**.
                     └───────────────┘
 ```
 
+![dbt lineage graph](docs/images/dbt_lineage_graph.png)
+
 | Model          | Rows   | Key             | Description                                                         |
 |----------------|--------|-----------------|---------------------------------------------------------------------|
 | `fact_orders`  | 9,994  | `sales_key`     | Sales, quantity, discount, profit, ship mode, plus FKs to every dimension |
@@ -92,6 +94,8 @@ dbt_debug ──▶ load_to_ods ──▶ dbt_test_sources ──▶ dbt_run ─
 | `dbt_test_sources` | Tests the raw source before any model is built                             |
 | `dbt_run`          | Builds the staging views and mart tables                                   |
 | `dbt_test`         | Runs every model test. A failure here stops the run and marks it failed   |
+
+![Successful Airflow DAG run](docs/images/airflow_dag_run.png)
 
 dbt is installed in its own virtualenv (`/opt/dbt_venv`) inside the Airflow image, so its dependencies never conflict with Airflow's.
 

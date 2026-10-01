@@ -10,7 +10,9 @@ VENV_BIN = "/opt/dbt_venv/bin"
 
 # every dbt command runs from the dbt project folder, using its own profiles.yml
 DBT = f"cd {DBT_DIR} && {VENV_BIN}/dbt"
-DBT_FLAGS = "--profiles-dir . --target dev"
+# --no-partial-parse: target/ is shared with dbt runs on the Windows host, whose
+# parse cache stores Windows paths that break the Linux dbt in this container
+DBT_FLAGS = "--profiles-dir . --target dev --no-partial-parse"
 
 default_args = {
     "owner": "dataops",
