@@ -2,6 +2,8 @@
 
 An end-to-end batch ELT pipeline that turns the raw **Superstore** sales spreadsheet into a tested **star-schema data warehouse**. Apache Airflow orchestrates the run, dbt handles transformation and data quality, and DuckDB serves as the embedded analytical database. Everything runs locally in a single Docker container.
 
+📘 **Full technical documentation:** [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) (data dictionary, lineage, runbook, troubleshooting).
+
 ![Airflow](https://img.shields.io/badge/Apache%20Airflow-3.1-017CEE?logo=apacheairflow&logoColor=white)
 ![dbt](https://img.shields.io/badge/dbt--core-1.12-FF694B?logo=dbt&logoColor=white)
 ![DuckDB](https://img.shields.io/badge/DuckDB-1.5-FFF000?logo=duckdb&logoColor=black)
@@ -114,6 +116,8 @@ The project defines **20 dbt tests**:
 │   ├── Dockerfile                   # Airflow 3.1 image + isolated dbt virtualenv
 │   ├── docker-compose.yml           # Single-container local deployment
 │   └── requirements-dbt.txt         # Pinned dbt-core / dbt-duckdb / duckdb
+├── docs/
+│   └── DOCUMENTATION.md             # Full technical documentation
 ├── data/
 │   └── raw/
 │       └── Superstore.xlsx          # Source dataset
@@ -148,8 +152,8 @@ The project defines **20 dbt tests**:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/MinaMiladd/superstore_DBT_Project.git
-cd superstore_DBT_Project
+git clone https://github.com/MinaMiladd/Superstore-Data-Warehouse-Airflow-dbt-DuckDB.git
+cd Superstore-Data-Warehouse-Airflow-dbt-DuckDB
 ```
 
 ### 2. Build and start Airflow
