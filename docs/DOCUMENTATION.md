@@ -198,7 +198,7 @@ Grain: **one row per order line item** (9,994 rows).
 **Task flow** (strictly sequential):
 
 ```
-dbt_debug → load_to_ods → dbt_test_sources → dbt_run → dbt_test
+dbt_debug → load_to_ods → dbt_test_sources → dbt_run_staging → dbt_test_staging → dbt_run_marts → dbt_test_marts
 ```
 
 | # | Task               | Command (simplified)                                   | Fails when                         |
@@ -206,8 +206,10 @@ dbt_debug → load_to_ods → dbt_test_sources → dbt_run → dbt_test
 | 1 | `dbt_debug`        | `dbt debug`                                            | Profile, project or DB is unreachable |
 | 2 | `load_to_ods`      | `python scripts/load_to_ods.py`                        | Excel file is missing or DB is locked |
 | 3 | `dbt_test_sources` | `dbt test --select source:ods --indirect-selection cautious` | Raw source tests fail          |
-| 4 | `dbt_run`          | `dbt run`                                              | A model has a SQL error            |
-| 5 | `dbt_test`         | `dbt test`                                             | Any data quality test fails        |
+| 4 | `dbt_run_staging`  | `dbt run --select path:models/staging`                 | A staging model has a SQL error    |
+| 5 | `dbt_test_staging` | `dbt test --select path:models/staging`                | A staging test fails (marts are then skipped) |
+| 6 | `dbt_run_marts`    | `dbt run --select path:models/marts`                   | A mart model has a SQL error       |
+| 7 | `dbt_test_marts`   | `dbt test --select path:models/marts`                  | A mart test fails                  |
 
 Every dbt command runs from `/opt/airflow/project/my_project` with `--profiles-dir . --target dev`, so the project uses its own committed `profiles.yml`.
 
@@ -217,13 +219,13 @@ Every dbt command runs from `/opt/airflow/project/my_project` with `--profiles-d
 
 ![Successful Airflow DAG run](images/airflow_dag_run.png)
 
-*Figure 2: a successful `superstore_dwh` run in the Airflow 3 Graph view, with all five tasks green.*
+*Figure 2: a successful `superstore_dwh` run in the Airflow 3 Graph view, with all tasks green.*
 
 ---
 
 ## 7. Data Quality & Testing
 
-**20 tests in total**, run by the `dbt_test` task.
+**20 tests in total**: the 8 staging tests run in `dbt_test_staging` and the 12 mart tests in `dbt_test_marts`.
 
 | Model            | Column                                   | Tests                          |
 |------------------|------------------------------------------|--------------------------------|

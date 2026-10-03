@@ -45,14 +45,34 @@ with DAG(
         bash_command=f"{DBT} test --select source:ods --indirect-selection cautious {DBT_FLAGS}",
     )
 
-    dbt_run = BashOperator(
-        task_id="dbt_run",
-        bash_command=f"{DBT} run {DBT_FLAGS}",
+    # staging layer: build, then test it before anything downstream reads it
+    dbt_run_staging = BashOperator(
+        task_id="dbt_run_staging",
+        bash_command=f"{DBT} run --select path:models/staging {DBT_FLAGS}",
     )
 
-    dbt_test = BashOperator(
-        task_id="dbt_test",
-        bash_command=f"{DBT} test {DBT_FLAGS}",
+    dbt_test_staging = BashOperator(
+        task_id="dbt_test_staging",
+        bash_command=f"{DBT} test --select path:models/staging {DBT_FLAGS}",
     )
 
-    dbt_debug >> load_to_ods >> dbt_test_sources >> dbt_run >> dbt_test
+    # marts layer: only built once staging has passed its tests
+    dbt_run_marts = BashOperator(
+        task_id="dbt_run_marts",
+        bash_command=f"{DBT} run --select path:models/marts {DBT_FLAGS}",
+    )
+
+    dbt_test_marts = BashOperator(
+        task_id="dbt_test_marts",
+        bash_command=f"{DBT} test --select path:models/marts {DBT_FLAGS}",
+    )
+
+    (
+        dbt_debug
+        >> load_to_ods
+        >> dbt_test_sources
+        >> dbt_run_staging
+        >> dbt_test_staging
+        >> dbt_run_marts
+        >> dbt_test_marts
+    )

@@ -84,7 +84,7 @@ A star schema at the grain of **one row per order line item**.
 DAG `superstore_dwh` runs `@daily` (no catchup, retries once after 2 minutes):
 
 ```
-dbt_debug ──▶ load_to_ods ──▶ dbt_test_sources ──▶ dbt_run ──▶ dbt_test
+dbt_debug ──▶ load_to_ods ──▶ dbt_test_sources ──▶ dbt_run_staging ──▶ dbt_test_staging ──▶ dbt_run_marts ──▶ dbt_test_marts
 ```
 
 | Task               | What it does                                                               |
@@ -92,8 +92,12 @@ dbt_debug ──▶ load_to_ods ──▶ dbt_test_sources ──▶ dbt_run ─
 | `dbt_debug`        | Checks the dbt installation, profile and database connection              |
 | `load_to_ods`      | Runs [`scripts/load_to_ods.py`](scripts/load_to_ods.py) to load the Excel sheet into `ods.superstore` with DuckDB's `excel` extension |
 | `dbt_test_sources` | Tests the raw source before any model is built                             |
-| `dbt_run`          | Builds the staging views and mart tables                                   |
-| `dbt_test`         | Runs every model test. A failure here stops the run and marks it failed   |
+| `dbt_run_staging`  | Builds the staging views (`--select path:models/staging`)                  |
+| `dbt_test_staging` | Tests the staging layer. A failure stops the run before any mart is built  |
+| `dbt_run_marts`    | Builds the mart tables (`--select path:models/marts`)                      |
+| `dbt_test_marts`   | Tests the marts. A failure here marks the run as failed                    |
+
+Each layer is tested immediately after it is built, so bad data never flows into the next layer.
 
 ![Successful Airflow DAG run](docs/images/airflow_dag_run.png)
 
@@ -177,7 +181,7 @@ Go to **http://localhost:8080**. The local setup has authentication turned off, 
 
 1. Find the **`superstore_dwh`** DAG. It is paused when first created.
 2. Unpause it, then click **Trigger**.
-3. Follow the run in the **Graph** view. All five tasks should turn green.
+3. Follow the run in the **Graph** view. All seven tasks should turn green.
 
 ### 5. Stop the stack
 
