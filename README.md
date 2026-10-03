@@ -160,8 +160,8 @@ The project defines **20 dbt tests**:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/MinaMiladd/Superstore-Data-Warehouse-Airflow-dbt-DuckDB.git
-cd Superstore-Data-Warehouse-Airflow-dbt-DuckDB
+git clone https://github.com/MinaMiladd/MinaMiladd-Superstore_Data_Warehouse_Airflow_dbt_DuckDB.git
+cd MinaMiladd-Superstore_Data_Warehouse_Airflow_dbt_DuckDB
 ```
 
 ### 2. Build and start Airflow
